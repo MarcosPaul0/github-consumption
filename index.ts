@@ -8,20 +8,38 @@ async function getAllUsers(page: number): Promise<User[]> {
   return response.data;
 }
 
-async function getUser(userName: string): Promise<User> {
-  const response = await api.get(`/users/${userName}`);
+async function getUser(login: string): Promise<User> {
+  const response = await api.get(`/users/${login}`);
+
+  return response.data;
+}
+
+async function getUserFollowers(login: string): Promise<User> {
+  const response = await api.get(`/users/${login}/followers`);
 
   return response.data;
 }
 
 async function getAllOrgs(page: number): Promise<Orgs[]> {
-  const response = await api.get(`/organizations?per_page=100&page=${page}`);
+  const response = await api.get(`/users?per_page=100&page=${page}&type=organization`);
 
   return response.data;
 }
 
-async function getRepository(user: string, repositoryName: string): Promise<Repository[]> {
-  const response = await api.get(`/repos/${user}/${repositoryName}`);
+async function getAllUserRepositories(login: string): Promise<Repository[]> {
+  const response = await api.get(`/user/${login}/repos`);
+
+  return response.data;
+}
+
+async function getRepository(login: string, repositoryName: string): Promise<Repository[]> {
+  const response = await api.get(`/repos/${login}/${repositoryName}`);
+
+  return response.data;
+}
+
+async function getCodeFrequency(login: string, repositoryName: string) {
+  const response = await api.get(`/repos/${login}/${repositoryName}/stats/code_frequency`)
 
   return response.data;
 }
@@ -38,24 +56,24 @@ async function getAllEvents() {
   return response.data;
 }
 
-async function displayValues() {
-  // for (let page = 0; page < 1000; page++) {
-  //   const users = await getUsers(page);
+async function consumption() {
+  const allLicenses = await getAllLicenses();
 
-  //   users.forEach(async (user: User) => {
-  //     const repos = await getRepositories(user.login);
+  const licensesCreated = await prisma.licenses.createMany(allLicenses);
 
-  //     await prisma.user.create({
-  //       data: {}
-  //     });
+  for (let page = 0; page < 100; page++) {
+    const allUsers = await getAllUsers(page);
 
-  //     repos.forEach(async (repo) => {
-  //       await prisma.repository.create({
-  //         data: {}
-  //       });
-  //     });
-  //   });
-  // }
+    allUsers.forEach(async (user: User) => {
+      const oneUser = await getUser(user.login);
+
+      const userRepositories = await getAllUserRepositories(user.login);
+
+      userRepositories.forEach(async (repository: Repository) => {
+        const oneRepository = await getRepository(user.login, repository.name);
+      });
+    });
+  }
 }
 
-displayValues();
+consumption();

@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserType {
+  organization
+  user
+}
+
 model Users {
   id              String   @id @default(uuid())
   login           String   @unique @db.VarChar(50)
@@ -17,6 +22,7 @@ model Users {
   site_admin      Boolean
   bio             String?
   location        String?
+  type           UserType
   created_at      DateTime
   updated_at      DateTime
 
@@ -25,9 +31,6 @@ model Users {
   collaborators Collaborators[]
   repositories Repositories[]
 
-  organization_id String?
-  organization Organizations? @relation(fields: [organization_id], references: [id])
-
   @@map("users")
 }
 
@@ -35,24 +38,12 @@ model Followers {
   id           String @id @default(uuid())
 
   follower_id  String
-  follower Users @relation("follower", fields: [follower_id], references: [id])
+  user_follower Users @relation("follower", fields: [follower_id], references: [id])
 
   following_id String
   following Users @relation("following", fields: [following_id], references: [id])
 
   @@map("followers")
-}
-
-model Organizations {
-  id          String @id @default(uuid())
-  login       String @unique @db.VarChar(50)
-  url         String @unique
-  avatar_url  String @db.VarChar(255)
-  description String?
-
-  users Users[]
-
-  @@map("organizations")
 }
 
 model Licenses {
