@@ -1,0 +1,109 @@
+import { Licenses, Users } from "@prisma/client";
+import { getAllUserRepositories, getRepository } from "../consumption";
+import prisma from "../prisma";
+import { Repository } from "../types";
+
+async function getRepoParams(
+  user: Users,
+  userRepositories: any
+): Promise<Params[]> {
+  const repoParams = userRepositories
+    .slice(0, 10)
+    .map(async (repository: Repository) => {
+      return {
+        login: user.login,
+        repositoryName: repository.name,
+        userId: user.id,
+      };
+    });
+
+  await Promise.all(repoParams);
+
+  return repoParams;
+}
+
+interface Params {
+  login: string;
+  repositoryName: string;
+  userId: string;
+}
+
+async function repositoriesConsumption() {
+  const allUsersCreated = await prisma.users.findMany();
+
+  for (const [index, user] of allUsersCreated.entries()) {
+    console.log(`user ${index}`);
+    const userRepositories = await getAllUserRepositories(user.login);
+
+    for (const [index, repo] of userRepositories.slice(0, 500).entries()) {
+      console.log(`repo ${index}`);
+      const oneRepository: any = await getRepository(user.login, repo.name);
+
+      if (oneRepository?.license?.key) {
+        const license: Licenses = (await prisma.licenses.findFirst({
+          where: {
+            key: oneRepository.license.key,
+          },
+        })) as Licenses;
+
+        try {
+          await prisma.repositories.create({
+            data: {
+              owner_id: user.id,
+              license_id: license.id,
+              name: oneRepository.name,
+              full_name: oneRepository.full_name,
+              language: oneRepository.language,
+              has_issues: oneRepository.has_issues,
+              forks_count: oneRepository.forks_count,
+              open_issues_count: oneRepository.open_issues_count,
+              watchers_count: oneRepository.watchers_count,
+              is_template: oneRepository.is_template,
+              private: oneRepository.private,
+              html_url: oneRepository.html_url,
+              description: oneRepository.description,
+              fork: oneRepository.fork,
+              url: oneRepository.url,
+              size: oneRepository.size,
+              created_at: oneRepository.created_at,
+              updated_at: oneRepository.updated_at,
+              pushed_at: oneRepository.pushed_at,
+            },
+          });
+        } catch (error: any) {
+          console.log(error);
+        }
+      } else {
+        try {
+          await prisma.repositories.create({
+            data: {
+              owner_id: user.id,
+              license_id: null,
+              name: oneRepository.name,
+              full_name: oneRepository.full_name,
+              language: oneRepository.language,
+              has_issues: oneRepository.has_issues,
+              forks_count: oneRepository.forks_count,
+              open_issues_count: oneRepository.open_issues_count,
+              watchers_count: oneRepository.watchers_count,
+              is_template: oneRepository.is_template,
+              private: oneRepository.private,
+              html_url: oneRepository.html_url,
+              description: oneRepository.description,
+              fork: oneRepository.fork,
+              url: oneRepository.url,
+              size: oneRepository.size,
+              created_at: oneRepository.created_at,
+              updated_at: oneRepository.updated_at,
+              pushed_at: oneRepository.pushed_at,
+            },
+          });
+        } catch (error: any) {
+          console.log(error);
+        }
+      }
+    }
+  }
+}
+
+repositoriesConsumption();

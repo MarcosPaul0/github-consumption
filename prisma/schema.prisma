@@ -7,50 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserType {
-  organization
-  user
-}
-
 model Users {
-  id              String   @id @default(uuid())
-  login           String   @unique @db.VarChar(50)
-  name            String   @db.VarChar(255)
-  avatar_url      String   @db.VarChar(255)
-  html_url        String   @db.VarChar(255)
-  url             String   @unique
-  site_admin      Boolean
-  bio             String?
-  location        String?
-  type           UserType
-  created_at      DateTime
-  updated_at      DateTime
-
-  follower Followers[] @relation("follower")
-  following Followers[] @relation("following")
+  id            String          @id @default(uuid())
+  login         String          @unique @db.VarChar(50)
+  name          String?         @db.VarChar(255)
+  avatar_url    String          @db.VarChar(255)
+  html_url      String          @db.VarChar(255)
+  url           String          @unique
+  site_admin    Boolean
+  bio           String?
+  location      String?
+  type          UserType
+  created_at    DateTime
+  updated_at    DateTime
   collaborators Collaborators[]
-  repositories Repositories[]
+  follower      Followers[]     @relation("follower")
+  following     Followers[]     @relation("following")
+  repositories  Repositories[]
 
   @@map("users")
 }
 
 model Followers {
-  id           String @id @default(uuid())
+  id            String @id @default(uuid())
+  follower_id   String
+  following_id  String
+  user_follower Users  @relation("follower", fields: [follower_id], references: [id])
+  following     Users  @relation("following", fields: [following_id], references: [id])
 
-  follower_id  String
-  user_follower Users @relation("follower", fields: [follower_id], references: [id])
-
-  following_id String
-  following Users @relation("following", fields: [following_id], references: [id])
-
+  @@unique([follower_id, following_id], map: "followers_unique")
   @@map("followers")
 }
 
 model Licenses {
-  id   String @id @default(uuid())
-  name String @db.VarChar(255)
-  key  String @db.VarChar(30)
-  url  String
+  id           String         @id @default(uuid())
+  name         String         @db.VarChar(255)
+  key          String         @db.VarChar(30)
+  url          String
+  repositories Repositories[]
 
   @@map("licenses")
 }
@@ -67,49 +61,58 @@ model Events {
 }
 
 model Repositories {
-  id          String  @id @default(uuid())
-  name        String  @db.VarChar(30)
-  full_name   String  @db.VarChar(60)
-  private     Boolean
-  html_url    String
-  description String
-  fork        Boolean
-  download_url String
-  url         String
-  size        Int
-  created_at DateTime
-  updated_at DateTime
-  pushed_at   DateTime
+  id                String          @id @default(uuid())
+  name              String          @db.VarChar(30)
+  full_name         String          @db.VarChar(60)
+  language          String          @db.VarChar(30)
+  has_issues        Boolean
+  forks_count       Int
+  open_issues_count Int
+  watchers_count    Int
+  is_template       Boolean
+  private           Boolean
+  html_url          String
+  description       String
+  fork              Boolean
+  url               String
+  size              Int
+  created_at        DateTime
+  updated_at        DateTime
+  pushed_at         DateTime
+  owner_id          String
+  license_id        String?
+  license           Licenses?       @relation(fields: [license_id], references: [id])
+  owner             Users           @relation(fields: [owner_id], references: [id])
+  code_frequency    CodeFrequency[]
+  collaborators     Collaborators[]
 
-  code_requency CodeFrequency[]
-  collaborators Collaborators[]
-
-  owner_id    String
-  owner Users @relation(fields: [owner_id], references: [id])
-
+  @@unique([owner_id, name], map: "user_repo_unique")
   @@map("repositories")
 }
 
 model Collaborators {
-  id      String @id @default(uuid())
-
-  user_id String
-  user Users @relation(fields: [user_id], references: [id])
-
-  repo_id String
+  id         String       @id @default(uuid())
+  user_id    String
+  repo_id    String
   repository Repositories @relation(fields: [repo_id], references: [id])
+  user       Users        @relation(fields: [user_id], references: [id])
 
+  @@unique([user_id, repo_id], map: "colab_user_repo_unique")
   @@map("collaborators")
 }
 
 model CodeFrequency {
-  id      String @id @default(uuid())
-  date   DateTime
-  additions Int
-  deletions Int
-
-  repo_id String
+  id         String       @id @default(uuid())
+  date       DateTime
+  additions  Int
+  deletions  Int
+  repo_id    String
   repository Repositories @relation(fields: [repo_id], references: [id])
 
   @@map("code_frequency")
+}
+
+enum UserType {
+  Organization
+  User
 }

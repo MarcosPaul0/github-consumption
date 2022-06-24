@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "UserType" AS ENUM ('Organization', 'User');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -9,9 +12,9 @@ CREATE TABLE "users" (
     "site_admin" BOOLEAN NOT NULL,
     "bio" TEXT,
     "location" TEXT,
+    "type" "UserType" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
-    "organization_id" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -23,17 +26,6 @@ CREATE TABLE "followers" (
     "following_id" TEXT NOT NULL,
 
     CONSTRAINT "followers_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "organizations" (
-    "id" TEXT NOT NULL,
-    "login" VARCHAR(50) NOT NULL,
-    "url" TEXT NOT NULL,
-    "avatar_url" VARCHAR(255) NOT NULL,
-    "description" TEXT,
-
-    CONSTRAINT "organizations_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -63,6 +55,12 @@ CREATE TABLE "repositories" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(30) NOT NULL,
     "full_name" VARCHAR(60) NOT NULL,
+    "language" VARCHAR(30) NOT NULL,
+    "has_issues" BOOLEAN NOT NULL,
+    "forks_count" INTEGER NOT NULL,
+    "open_issues_count" INTEGER NOT NULL,
+    "watchers_count" INTEGER NOT NULL,
+    "is_template" BOOLEAN NOT NULL,
     "private" BOOLEAN NOT NULL,
     "html_url" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -74,6 +72,7 @@ CREATE TABLE "repositories" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "pushed_at" TIMESTAMP(3) NOT NULL,
     "owner_id" TEXT NOT NULL,
+    "license_id" TEXT NOT NULL,
 
     CONSTRAINT "repositories_pkey" PRIMARY KEY ("id")
 );
@@ -90,7 +89,9 @@ CREATE TABLE "collaborators" (
 -- CreateTable
 CREATE TABLE "code_frequency" (
     "id" TEXT NOT NULL,
-    "frequency" JSONB NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "additions" INTEGER NOT NULL,
+    "deletions" INTEGER NOT NULL,
     "repo_id" TEXT NOT NULL,
 
     CONSTRAINT "code_frequency_pkey" PRIMARY KEY ("id")
@@ -102,18 +103,6 @@ CREATE UNIQUE INDEX "users_login_key" ON "users"("login");
 -- CreateIndex
 CREATE UNIQUE INDEX "users_url_key" ON "users"("url");
 
--- CreateIndex
-CREATE UNIQUE INDEX "organizations_login_key" ON "organizations"("login");
-
--- CreateIndex
-CREATE UNIQUE INDEX "organizations_url_key" ON "organizations"("url");
-
--- CreateIndex
-CREATE UNIQUE INDEX "code_frequency_repo_id_key" ON "code_frequency"("repo_id");
-
--- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
 -- AddForeignKey
 ALTER TABLE "followers" ADD CONSTRAINT "followers_follower_id_fkey" FOREIGN KEY ("follower_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -122,6 +111,9 @@ ALTER TABLE "followers" ADD CONSTRAINT "followers_following_id_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "repositories" ADD CONSTRAINT "repositories_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "repositories" ADD CONSTRAINT "repositories_license_id_fkey" FOREIGN KEY ("license_id") REFERENCES "licenses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "collaborators" ADD CONSTRAINT "collaborators_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
