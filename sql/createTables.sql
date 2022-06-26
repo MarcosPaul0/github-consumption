@@ -1,3 +1,4 @@
+-- TABELA DE USUÁRIOS
 CREATE TABLE IF NOT EXISTS public.users
 (
     id text NOT NULL PRIMARY KEY,
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.users
     updated_at timestamp(3) without time zone NOT NULL,
 )
 
+-- TABELA DE SEGUIDORES
 CREATE TABLE IF NOT EXISTS public.followers
 (
     id text NOT NULL PRIMARY KEY,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.followers
         ON DELETE RESTRICT
 )
 
+-- TABELA DE LICENSAS
 CREATE TABLE IF NOT EXISTS public.licenses
 (
     id text NOT NULL PRIMARY KEY,
@@ -38,6 +41,7 @@ CREATE TABLE IF NOT EXISTS public.licenses
     url text NOT NULL,
 )
 
+-- TABELA DE REPOSITÓRIOS
 CREATE TABLE IF NOT EXISTS public.repositories
 (
     id text NOT NULL PRIMARY KEY,
@@ -71,6 +75,7 @@ CREATE TABLE IF NOT EXISTS public.repositories
         ON DELETE RESTRICT
 )
 
+-- TABELA DE FREQÊNCIA DE CÓDIGO
 CREATE TABLE IF NOT EXISTS public.code_frequency
 (
     id text NOT NULL PRIMARY KEY,
@@ -84,6 +89,7 @@ CREATE TABLE IF NOT EXISTS public.code_frequency
         ON DELETE RESTRICT
 )
 
+-- TABELA DE COLABORADORES
 CREATE TABLE IF NOT EXISTS public.collaborators
 (
     id text NOT NULL PRIMARY KEY,

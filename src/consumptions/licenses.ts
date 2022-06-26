@@ -5,7 +5,10 @@ async function consumptionLicenses() {
   try {
     const allLicenses = await getAllLicenses();
 
+    // itreação sobre toas as licensas de positórios
     allLicenses.forEach(async (license) => {
+
+      // insere a licensa no banco de dados
       await prisma.licenses.create({
         data: {
           key: license.key,

@@ -8,10 +8,12 @@ async function consumptionUsers() {
   for (let page = 0; page < 1530; page += 102) {
     const allUsers = await getAllUsers(page);
 
+    // iteração sobre todos os usúario retornados da api
     allUsers.forEach(async (user: User) => {
       const oneUser = await getUser(user.login);
 
       try {
+        // registro o usuário no banco de dados
         await prisma.users.create({
           data: {
             login: oneUser.login,
@@ -36,3 +38,5 @@ async function consumptionUsers() {
     });
   }
 }
+
+consumptionUsers();

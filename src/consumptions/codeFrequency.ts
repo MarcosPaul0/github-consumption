@@ -5,6 +5,7 @@ async function consumptionCodeFrequency() {
   let repoCount = 0;
   let codeFrequencyCount = 0;
 
+  // busca todos repositórios e seu dono cadastrados no banco de dados ordenados pela data de criação
   const allRepositories = await prisma.repositories.findMany({
     orderBy: {
       created_at: "desc",
@@ -14,6 +15,7 @@ async function consumptionCodeFrequency() {
     },
   });
 
+  // iteração sobre o resultado da busca
   for (const [index, repo] of allRepositories.entries()) {
     const allCodeFrequency = await getCodeFrequency(
       repo.owner.login,
@@ -23,6 +25,7 @@ async function consumptionCodeFrequency() {
     console.log(`repo ${repoCount}`);
     repoCount++;
 
+    // se existe uma frequência de código é registrado no banco de dados
     if (allCodeFrequency && allCodeFrequency?.length > 0) {
       for (const [index, codeFrequency] of allCodeFrequency.entries()) {
         await prisma.codeFrequency.create({
