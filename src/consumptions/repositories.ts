@@ -1,46 +1,19 @@
-import { Licenses, Users } from "@prisma/client";
-import { getAllUserRepositories, getRepository } from "../consumption";
+import { Licenses } from "@prisma/client";
+import { getAllUserRepositories, getRepository } from "../calls";
 import prisma from "../prisma";
-import { Repository } from "../types";
-
-async function getRepoParams(
-  user: Users,
-  userRepositories: any
-): Promise<Params[]> {
-  const repoParams = userRepositories
-    .slice(0, 10)
-    .map(async (repository: Repository) => {
-      return {
-        login: user.login,
-        repositoryName: repository.name,
-        userId: user.id,
-      };
-    });
-
-  await Promise.all(repoParams);
-
-  return repoParams;
-}
-
-interface Params {
-  login: string;
-  repositoryName: string;
-  userId: string;
-}
 
 async function repositoriesConsumption() {
   const allUsersCreated = await prisma.users.findMany();
 
   for (const [index, user] of allUsersCreated.entries()) {
-    console.log(`user ${index}`);
+    console.log(`Usuário ${index}`);
     const userRepositories = await getAllUserRepositories(user.login);
 
     for (const [index, repo] of userRepositories.slice(0, 500).entries()) {
-      console.log(`repo ${index}`);
-      const oneRepository: any = await getRepository(user.login, repo.name);
+      const oneRepository = await getRepository(user.login, repo.name);
 
       if (oneRepository?.license?.key) {
-        const license: Licenses = (await prisma.licenses.findFirst({
+        const license = (await prisma.licenses.findFirst({
           where: {
             key: oneRepository.license.key,
           },
@@ -70,6 +43,8 @@ async function repositoriesConsumption() {
               pushed_at: oneRepository.pushed_at,
             },
           });
+
+          console.log(`Novo repositório ${index} criado`);
         } catch (error: any) {
           console.log(error);
         }
@@ -98,6 +73,8 @@ async function repositoriesConsumption() {
               pushed_at: oneRepository.pushed_at,
             },
           });
+
+          console.log(`Novo repositório ${index} criado`);
         } catch (error: any) {
           console.log(error);
         }

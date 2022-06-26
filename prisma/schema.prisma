@@ -49,17 +49,6 @@ model Licenses {
   @@map("licenses")
 }
 
-model Events {
-  id       String  @id @default(uuid())
-  type     String  @db.VarChar(30)
-  public   Boolean
-  payload  Json
-  repo_id  String
-  actor_id String
-
-  @@map("events")
-}
-
 model Repositories {
   id                String          @id @default(uuid())
   name              String          @db.VarChar(30)

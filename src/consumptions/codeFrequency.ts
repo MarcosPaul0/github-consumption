@@ -1,4 +1,4 @@
-import { getCodeFrequency } from "../consumption";
+import { getCodeFrequency } from "../calls";
 import prisma from "../prisma";
 
 async function consumptionCodeFrequency() {
@@ -14,7 +14,7 @@ async function consumptionCodeFrequency() {
     },
   });
 
-  for (const [index, repo] of allRepositories.slice(912 + 1464).entries()) {
+  for (const [index, repo] of allRepositories.entries()) {
     const allCodeFrequency = await getCodeFrequency(
       repo.owner.login,
       repo.name
@@ -34,7 +34,7 @@ async function consumptionCodeFrequency() {
           },
         });
 
-        console.log(`code frequency ${codeFrequencyCount}`);
+        console.log(`Frequência de código ${codeFrequencyCount} criado`);
         codeFrequencyCount++;
       }
     }

@@ -1,4 +1,4 @@
-import { Repositories, Users } from "@prisma/client";
+import { CodeFrequency, Licenses, Repositories, Users } from "@prisma/client";
 import { api } from "./api";
 import { Orgs, Repository, User } from "./types";
 
@@ -49,13 +49,13 @@ export async function getAllUserRepositories(login: string): Promise<Repository[
 export async function getRepository(
   login: string,
   repositoryName: string
-): Promise<Repositories | null> {
+): Promise<Repository> {
   const response = await api.get(`/repos/${login}/${repositoryName}`);
 
   return response.data;
 }
 
-export async function getCodeFrequency(login: string, repositoryName: string) {
+export async function getCodeFrequency(login: string, repositoryName: string): Promise<[number, number, number][]> {
   const response = await api.get(
     `/repos/${login}/${repositoryName}/stats/code_frequency`
   );
@@ -63,7 +63,7 @@ export async function getCodeFrequency(login: string, repositoryName: string) {
   return response.data;
 }
 
-export async function getCollaborators(login: string, repositoryName: string) {
+export async function getCollaborators(login: string, repositoryName: string): Promise<User[]> {
   const response = await api.get(
     `/repos/${login}/${repositoryName}/contributors`
   );
@@ -71,7 +71,7 @@ export async function getCollaborators(login: string, repositoryName: string) {
   return response.data;
 }
 
-export async function getAllLicenses() {
+export async function getAllLicenses(): Promise<Licenses[]> {
   const response = await api.get("/licenses");
 
   return response.data;

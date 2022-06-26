@@ -1,5 +1,5 @@
 import { Users } from "@prisma/client";
-import { getUser, getUserFollowers } from "../consumption";
+import { getUser, getUserFollowers } from "../calls";
 import prisma from "../prisma";
 
 async function registerFollowers() {
@@ -61,3 +61,5 @@ async function registerFollowers() {
     });
   });
 }
+
+registerFollowers();

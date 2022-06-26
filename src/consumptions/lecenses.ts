@@ -1,11 +1,11 @@
-import { getAllLicenses } from "../consumption";
+import { getAllLicenses } from "../calls";
 import prisma from "../prisma";
 
 async function consumptionLicenses() {
   try {
     const allLicenses = await getAllLicenses();
 
-    allLicenses.forEach(async (license: any) => {
+    allLicenses.forEach(async (license) => {
       await prisma.licenses.create({
         data: {
           key: license.key,

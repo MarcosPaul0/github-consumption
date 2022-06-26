@@ -1,4 +1,4 @@
-import { getCollaborators } from "../consumption";
+import { getCollaborators } from "../calls";
 import prisma from "../prisma";
 
 async function consumptionCollaborators() {
@@ -21,7 +21,7 @@ async function consumptionCollaborators() {
         repo.name
       );
 
-      console.log(`repo ${repoCount}`);
+      console.log(`Repositório ${repoCount}`);
       repoCount++;
 
       if (allCollaborators && allCollaborators?.length > 0) {
@@ -42,7 +42,7 @@ async function consumptionCollaborators() {
               },
             });
 
-            console.log(`collaborator ${collaboratorsCount}`);
+            console.log(`Colaborador ${collaboratorsCount} criado`);
             collaboratorsCount++;
           }
         }

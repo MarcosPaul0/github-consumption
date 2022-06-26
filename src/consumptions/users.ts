@@ -1,11 +1,11 @@
-import { getAllUsers, getUser } from "../consumption";
+import { getAllUsers, getUser } from "../calls";
 import prisma from "../prisma";
 import { User } from "../types";
 
 async function consumptionUsers() {
   let count = 1;
 
-  for (let page = 1300; page < 1504; page += 102) {
+  for (let page = 0; page < 1530; page += 102) {
     const allUsers = await getAllUsers(page);
 
     allUsers.forEach(async (user: User) => {
