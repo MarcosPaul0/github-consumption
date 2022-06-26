@@ -16,8 +16,9 @@ GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA public TO fill_group;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO dev_group;
 
 -- USUÁRIOS DO BANCO DE DADOS
-CREATE USER adm_user IN adm_group;
+CREATE USER adm_user WITH PASSWORD '123' IN GROUP adm_group;
 
-CREATE USER fill_user IN fill_group;
+CREATE USER fill_user WITH PASSWORD '123' IN GROUP fill_group;
 
-CREATE USER dev_user IN dev_group;
+CREATE USER dev_user WITH PASSWORD '123' IN GROUP dev_group;
+
