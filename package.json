@@ -5,7 +5,12 @@
   "author": "MarcosPaulo <marcosphip7@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev index.ts"
+    "users": "ts-node-dev ./src/consumptions/users.ts",
+    "followers": "ts-node-dev ./src/consumptions/followers.ts",
+    "licenses": "ts-node-dev ./src/consumptions/licenses.ts",
+    "repositories": "ts-node-dev ./src/consumptions/repositories.ts",
+    "codeFrequency": "ts-node-dev ./src/consumptions/codeFrequency.ts",
+    "collaborators": "ts-node-dev ./src/consumptions/collaborators.ts"
   },
   "dependencies": {
     "@prisma/client": "^3.15.1",
