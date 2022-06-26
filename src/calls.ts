@@ -37,7 +37,7 @@ export async function getAllLicenses(): Promise<Licenses[]> {
   return response.data;
 }
 
-// chamada na api que busca repositorios de um usuário
+// chamada na api que busca repositórios de um usuário
 export async function getAllUserRepositories(login: string): Promise<Repository[]> {
   const response = await api.get(`/users/${login}/repos?per_page=10`);
 

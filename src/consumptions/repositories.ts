@@ -3,7 +3,7 @@ import { getAllUserRepositories, getRepository } from "../calls";
 import prisma from "../prisma";
 
 async function repositoriesConsumption() {
-  // busca dotos os usuários do banco de dados ordenado pela data de criação
+  // busca todos os usuários do banco de dados ordenado pela data de criação
   const allUsersCreated = await prisma.users.findMany({
     orderBy: {
       created_at: 'desc',
@@ -15,11 +15,11 @@ async function repositoriesConsumption() {
     console.log(`Usuário ${index}`);
     const userRepositories = await getAllUserRepositories(user.login);
 
-    // iteração sobre os repositórios do uduário
+    // iteração sobre os repositórios do usuário
     for (const [index, repo] of userRepositories.slice(0, 500).entries()) {
       const oneRepository = await getRepository(user.login, repo.name);
 
-      // se o repositório tiver uma licensa cadastrada registra o repositória com a licensa
+      // se o repositório tiver uma licensa cadastrada registra o repositório com a licensa
       if (oneRepository?.license?.key) {
         const license = (await prisma.licenses.findFirst({
           where: {
