@@ -7,7 +7,7 @@
   "scripts": {
     "users": "ts-node-dev ./src/consumptions/users.ts",
     "followers": "ts-node-dev ./src/consumptions/followers.ts",
-    "licenses": "ts-node-dev ./src/consumptions/licenses.ts",
+    "licenses_gh": "ts-node-dev ./src/consumptions/licenses.ts",
     "repositories": "ts-node-dev ./src/consumptions/repositories.ts",
     "codeFrequency": "ts-node-dev ./src/consumptions/codeFrequency.ts",
     "collaborators": "ts-node-dev ./src/consumptions/collaborators.ts"
