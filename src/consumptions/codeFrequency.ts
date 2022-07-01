@@ -31,7 +31,7 @@ async function consumptionCodeFrequency() {
         await prisma.codeFrequency.create({
           data: {
             repo_id: repo.id,
-            date: new Date(codeFrequency[0]),
+            date: new Date(codeFrequency[0] * 1000),
             additions: codeFrequency[1],
             deletions: codeFrequency[2],
           },
